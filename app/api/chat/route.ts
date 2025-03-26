@@ -1,51 +1,73 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 
-// Access your API key (ensure it's set in .env.local)
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
+const LLAMA_API_KEY = '4378753f-4b81-4f96-8942-12bcfdd75f92';
+const LLAMA_API_URL = 'https://api.llama-api.com/v1/chat/completions';
 
-// Prepare the context for financial advice
-const FINANCIAL_CONTEXT = `You are an AI financial assistant. Provide advice on investments while:
-1. Explaining concepts clearly and simply
-2. Focusing on long-term investment strategies
-3. Emphasizing diversification
-4. Warning about risks
-5. Reminding that this is general advice, not professional financial advice
+const FINANCIAL_CONTEXT = `You are an expert financial advisor with deep knowledge of personal finance, investment strategies, and market analysis. 
+Your role is to provide clear, practical, and ethical financial advice. Follow these guidelines:
 
-User Question: `;
+1. Be clear and concise in your explanations
+2. Focus on long-term strategies and sustainable practices
+3. Always emphasize diversification and risk management
+4. Include relevant warnings and disclaimers
+5. Keep advice general and avoid specific product recommendations
+6. Consider different income levels and financial situations
+7. Use simple language to explain complex concepts
+8. Provide actionable steps when possible
+9. Include relevant market context when appropriate
+10. Always remind users that past performance doesn't guarantee future results
+
+Remember: Your advice should be educational and empowering, helping users make informed financial decisions.`;
 
 export async function POST(req: Request) {
-  if (!process.env.GOOGLE_API_KEY) {
-    return NextResponse.json(
-      { error: 'API key not configured' },
-      { status: 500 }
-    );
-  }
-
   try {
     const { message } = await req.json();
-    
-    // Initialize the model with the standard version
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-pro',
-      generationConfig: {
+
+    if (!message) {
+      return NextResponse.json(
+        { error: 'Message is required' },
+        { status: 400 }
+      );
+    }
+
+    const response = await fetch(LLAMA_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${LLAMA_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-2-70b-chat',
+        messages: [
+          {
+            role: 'system',
+            content: FINANCIAL_CONTEXT
+          },
+          {
+            role: 'user',
+            content: message
+          }
+        ],
         temperature: 0.7,
-        maxOutputTokens: 2048,
-      }
+        max_tokens: 1000,
+        top_p: 0.9,
+        frequency_penalty: 0.5,
+        presence_penalty: 0.5,
+      }),
     });
-    
-    // Generate content
-    const prompt = FINANCIAL_CONTEXT + message;
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    
-    return NextResponse.json({
-      message: response.text(),
-    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Llama API Error:', error);
+      throw new Error(error.message || 'Failed to generate response');
+    }
+
+    const data = await response.json();
+    return NextResponse.json({ message: data.choices[0].message.content });
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(
-      { error: 'Failed to process request' },
+      { error: 'Failed to generate response' },
       { status: 500 }
     );
   }
