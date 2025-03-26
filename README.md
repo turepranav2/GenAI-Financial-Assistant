@@ -48,4 +48,4 @@ A modern AI-powered financial assistant that helps users make better investing d
 ├── lib/               # Utility functions and API clients
 ├── public/            # Static assets
 └── types/             # TypeScript type definitions
-``` 
+``` # GenAI-Financial-Assistant
