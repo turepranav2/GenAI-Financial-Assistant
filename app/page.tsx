@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Heading } from '@chakra-ui/react';
-import ChatInterface from '../components/ChatInterface';
+import Chat from '@/components/Chat';
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
           GenAI Financial Assistant
         </Heading>
       </Box>
-      <ChatInterface />
+      <Chat />
     </Box>
   );
 } 

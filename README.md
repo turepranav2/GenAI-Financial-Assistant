@@ -15,7 +15,7 @@ A modern AI-powered financial assistant that helps users make better investing d
 - Next.js 14
 - TypeScript
 - Chakra UI
-- OpenAI API
+- Gemini API
 - Node.js
 
 ## Getting Started
