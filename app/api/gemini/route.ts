@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const API_KEY = "AIzaSyDKv7dyAGykiSW9HWUSM5uJq1rtySDUBe8";
+const API_KEY = process.env.GEMINI_API_KEY;
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 // Function to clean the response text
@@ -22,6 +22,13 @@ function cleanResponse(text: string): string {
 
 export async function POST(req: Request) {
   try {
+    if (!API_KEY) {
+      return NextResponse.json(
+        { error: 'API key not configured' },
+        { status: 500 }
+      );
+    }
+
     const { prompt } = await req.json();
 
     if (!prompt) {
