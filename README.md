@@ -27,7 +27,7 @@ A modern AI-powered financial assistant that helps users make better investing d
    ```
 3. Create a `.env.local` file and add your OpenAI API key:
    ```
-   OPENAI_API_KEY=your_api_key_here
+   GEMINI_API_KEY=your_api_key_here
    ```
 4. Run the development server:
    ```bash
