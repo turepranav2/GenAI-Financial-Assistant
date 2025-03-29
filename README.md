@@ -37,7 +37,7 @@ A modern AI-powered financial assistant that helps users make better investing d
 
 ## Environment Variables
 
-- `OPENAI_API_KEY`: Your OpenAI API key for AI functionality
+- `GEMINI_API_KEY`: Your GEMINI-AI API key for AI functionality
 
 ## Project Structure
 
